@@ -17,7 +17,7 @@ Write a matrix on disk.
 import numpy as np
 from ondiskxy import MatrixWriter
 
-# create 10 random X matrices of shape (10000, 100) and stack them on disk
+# create 10 random X matrices of shape (1000, 100) and stack them on disk
 dir_path = "./X"
 writer = MatrixWriter(dir_path=dir_path, max_file_size_mb=25)
 for _ in range(10):
