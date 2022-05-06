@@ -167,3 +167,32 @@ class MultiHdf5Reader(object):
             reader = Hdf5Reader(file_name)
             for row in reader.iterrows():
                 yield row
+
+
+class Hdf5Assembler(object):
+
+    def __init__(self, dir_path):
+        self.dir_path = os.path.abspath(dir_path)
+        assert os.path.exists(self.dir_path)
+        self.meta_file = os.path.join(self.dir_path, "meta.json")
+
+    def _get_file_path(self, file_idx):
+        return os.path.join(self.dir_path, "slice-{0}.h5".format(file_idx))
+
+    def _read_meta(self):
+        with open(self.meta_file, "r") as f:
+            return json.load(f)
+
+    def iterfiles(self):
+        meta = self._read_meta()
+        for r in meta:
+            file_idx = r[0]
+            yield self._get_file_path(file_idx)
+
+    def assemble(self, file_path):
+        file_path = os.path.abspath(file_path)
+        writer = Hdf5Writer(file_path)
+        for fn in self.iterfiles():
+            reader = Hdf5Reader(fn)
+            X = reader.read()
+            writer.append(X)
