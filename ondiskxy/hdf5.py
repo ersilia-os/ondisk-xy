@@ -159,7 +159,7 @@ class MultiHdf5Reader(object):
             if X is None:
                 X = X_
             else:
-                X = np.vstack(X, X_)
+                X = np.vstack((X, X_))
         return X
 
     def iterrows(self):
