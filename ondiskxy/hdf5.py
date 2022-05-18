@@ -4,7 +4,11 @@ import json
 import numpy as np
 import shutil
 
-from .utils import slicer
+from .utils import slicer, chunker
+
+
+DATA_NAME = "data"
+DEFAULT_CHUNKSIZE = 100000
 
 
 class Hdf5Writer(object):
@@ -13,7 +17,7 @@ class Hdf5Writer(object):
             self.file_name = None
         else:
             self.file_name = os.path.abspath(file_name)
-        self.name = "data"
+        self.name = DATA_NAME
 
     def set_file(self, file_name):
         self.file_name = os.path.abspath(file_name)
@@ -42,14 +46,16 @@ class Hdf5Reader(object):
     def __init__(self, file_name):
         self.file_name = os.path.abspath(file_name)
         assert os.path.exists(self.file_name)
-        self.name = "data"
+        self.name = DATA_NAME
 
     def read(self):
         with h5py.File(self.file_name, "r") as f:
             X = f[self.name][:]
         return X
 
-    def iterchunks(self, chunksize=1000):
+    def iterchunks(self, chunksize=None):
+        if chunksize is None:
+            chunksize = DEFAULT_CHUNKSIZE
         with h5py.File(self.file_name, "r") as f:
             n = f[self.name].shape[0]
             for i_start, i_end in slicer(n, chunksize):
@@ -196,3 +202,29 @@ class Hdf5Assembler(object):
             reader = Hdf5Reader(fn)
             X = reader.read()
             writer.append(X)
+
+
+class Hdf5Stacker(object):
+
+    def __init__(self, file_name):
+        self.file_name = os.path.abspath(file_name)
+
+    def stack(self, file_names):
+        writer = Hdf5Writer(self.file_name)
+        for fn in file_names:
+            reader = Hdf5Reader(fn)
+            X = reader.read()
+            writer.append(X)
+
+
+class Hdf5Filter(object):
+
+    def __init__(self, file_name):
+        self.file_name = os.path.abspath(file_name)
+
+    def filter(self, idxs, file_name):
+        writer = Hdf5Writer(file_name)
+        for chunk_idxs in chunker(idxs, DEFAULT_CHUNKSIZE):
+            with h5py.File(self.file_name, "r") as f:
+                X = f[DATA_NAME][chunk_idxs]
+            writer.append(X)            
