@@ -23,3 +23,8 @@ class MatrixReader(object):
     def iterrows(self):
         for row in self.reader.iterrows():
             yield row
+
+            
+def filter_by_index(idxs, src_file, trg_file):
+    d = Hdf5Filter(src_file)
+    d.filter(idxs, trg_file)
