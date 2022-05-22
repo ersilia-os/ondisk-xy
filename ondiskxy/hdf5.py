@@ -214,9 +214,9 @@ class Hdf5Stacker(object):
         for fn in file_names:
             reader = Hdf5Reader(fn)
             X = reader.read()
-            writer.append(X)
-
-
+            writer.append(X)        
+            
+            
 class Hdf5Filter(object):
 
     def __init__(self, file_name):
@@ -225,6 +225,10 @@ class Hdf5Filter(object):
     def filter(self, idxs, file_name):
         writer = Hdf5Writer(file_name)
         for chunk_idxs in chunker(idxs, DEFAULT_CHUNKSIZE):
+            # hdf5 coordinates must be given in increasing order
+            sorted_chunk_idxs = np.sort(chunk_idxs)
+            original_order = np.argsort(np.argsort(chunk_idxs))
             with h5py.File(self.file_name, "r") as f:
-                X = f[DATA_NAME][chunk_idxs]
+                X = f[DATA_NAME][sorted_chunk_idxs]
+            X = np.array([X[i] for i in original_order])
             writer.append(X)            
