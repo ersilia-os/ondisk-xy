@@ -1,4 +1,4 @@
-from .hdf5 import MultiHdf5Reader, MultiHdf5Writer
+from .hdf5 import MultiHdf5Reader, MultiHdf5Writer, Hdf5Filter
 
 
 class MatrixWriter(object):
