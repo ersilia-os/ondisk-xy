@@ -1,6 +1,5 @@
 from .hdf5 import MultiHdf5Reader, MultiHdf5Writer, Hdf5Filter
 
-
 class MatrixWriter(object):
     def __init__(self, dir_path, max_file_size_mb=100, max_rows_per_file=1000000):
         self.writer = MultiHdf5Writer(

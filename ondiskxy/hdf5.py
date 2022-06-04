@@ -5,7 +5,6 @@ import numpy as np
 import shutil
 
 from .utils import slicer, chunker
-# from .api import MatrixWriter
 
 DATA_NAME = "data"
 DEFAULT_CHUNKSIZE = 100000
@@ -223,8 +222,8 @@ class Hdf5Filter(object):
         self.file_name = os.path.abspath(file_name)
 
     def filter(self, idxs, path_name):
-        writer = Hdf5Writer(path_name)
-        # writer = MatrixWriter(dir_path=path_name, max_file_size_mb=1000)
+        from .api import MatrixWriter
+        writer = MatrixWriter(dir_path=path_name, max_file_size_mb=1000)
         for chunk_idxs in chunker(idxs, DEFAULT_CHUNKSIZE):
             # hdf5 coordinates must be given in increasing order
             sorted_chunk_idxs = np.sort(chunk_idxs)
