@@ -5,7 +5,7 @@ import numpy as np
 import shutil
 
 from .utils import slicer, chunker
-from .api import MatrixWriter
+# from .api import MatrixWriter
 
 DATA_NAME = "data"
 DEFAULT_CHUNKSIZE = 100000
