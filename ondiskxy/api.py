@@ -24,6 +24,6 @@ class MatrixReader(object):
             yield row
 
             
-def filter_by_index(idxs, src_file, trg_path):
+def filter_by_index(idxs, src_file, trg_file):
     d = Hdf5Filter(src_file)
-    d.filter(idxs, trg_path)
+    d.filter(idxs, trg_file)

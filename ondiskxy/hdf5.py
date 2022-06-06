@@ -221,9 +221,8 @@ class Hdf5Filter(object):
     def __init__(self, file_name):
         self.file_name = os.path.abspath(file_name)
 
-    def filter(self, idxs, path_name):
-        from .api import MatrixWriter
-        writer = MatrixWriter(dir_path=path_name, max_file_size_mb=1000)
+    def filter(self, idxs, file_name):
+        writer = Hdf5Writer(file_name)
         for chunk_idxs in chunker(idxs, DEFAULT_CHUNKSIZE):
             # hdf5 coordinates must be given in increasing order
             sorted_chunk_idxs = np.sort(chunk_idxs)
@@ -231,4 +230,4 @@ class Hdf5Filter(object):
             with h5py.File(self.file_name, "r") as f:
                 X = f[DATA_NAME][sorted_chunk_idxs]
             X = np.array([X[i] for i in original_order])
-            writer.append(X)                
+            writer.append(X)               
